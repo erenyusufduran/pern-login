@@ -3,15 +3,16 @@ const pool = require("../db");
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jtwGenerator");
 const router = Router();
+const validationInfo = require("../middleware/validInfo");
 
-router.post("/register", async (req, res) => {
+router.post("/register", validationInfo, async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = await pool.query("SELECT * FROM users WHERE user_email=$1", [
       email,
     ]);
     if (user.rows.length !== 0) {
-      return res.status(401).send("User already exists.");
+      return res.status(401).json("User already exists.");
     }
     const saltRound = 10;
     const salt = await bcrypt.genSalt(saltRound);
@@ -24,11 +25,11 @@ router.post("/register", async (req, res) => {
     res.json({ token });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server Error.");
+    res.status(500).json("Server Error.");
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", validationInfo, async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await pool.query("SELECT * FROM users WHERE user_email=$1", [
@@ -45,7 +46,7 @@ router.post("/login", async (req, res) => {
     res.json({ token });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server Error.");
+    res.status(500).json("Server Error.");
   }
 });
 
