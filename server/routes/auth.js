@@ -20,7 +20,7 @@ router.post("/register", validationInfo, async (req, res) => {
     const bcryptPassword = bcrypt.hash(password, salt);
     const newUser = await pool.query(
       "INSERT INTO users (user_name, user_email, user_password) VALUES ($1,$2,$3) RETURNING *",
-      [name, email, password]
+      [name, email, bcryptPassword]
     );
     const token = jwtGenerator(newUser.rows[0].user_id);
     res.json({ token });
