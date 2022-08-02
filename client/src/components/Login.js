@@ -1,12 +1,12 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
-  const [alert, setAlert] = useState("");
   const { email, password } = inputs;
   const onChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -27,8 +27,9 @@ const Login = ({ setAuth }) => {
       if (parseRes.token) {
         localStorage.setItem("token", parseRes.token);
         setAuth(true);
+        toast.success("Login Succesfully!");
       } else {
-        setAlert(parseRes);
+        toast.error(parseRes);
       }
     } catch (err) {
       console.error(err);
@@ -37,7 +38,6 @@ const Login = ({ setAuth }) => {
   return (
     <Fragment>
       <h1 className="text-center my-5">Login</h1>
-      <h4 className="text-center">{alert}</h4>
       <form onSubmit={onSubmitForm}>
         <input
           className="form-control my-3"

@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Register = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
@@ -7,7 +8,6 @@ const Register = ({ setAuth }) => {
     email: "",
     password: "",
   });
-  const [alert, setAlert] = useState("");
 
   const { name, email, password } = inputs;
 
@@ -27,8 +27,9 @@ const Register = ({ setAuth }) => {
       if (parseRes.token) {
         localStorage.setItem("token", parseRes.token);
         setAuth(true);
+        toast.success("Register Succesfully!");
       } else {
-        setAlert(parseRes);
+        toast.error(parseRes);
       }
     } catch (error) {
       console.error(error.message);
@@ -37,7 +38,6 @@ const Register = ({ setAuth }) => {
   return (
     <Fragment>
       <h1 className="text-center my-5">Register</h1>
-      <h4 className="text-center">{alert}</h4>
       <form onSubmit={onSubmit}>
         <input
           className="form-control my-3"

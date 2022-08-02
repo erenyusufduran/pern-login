@@ -25,7 +25,6 @@ router.post("/register", validationInfo, async (req, res) => {
     const token = jwtGenerator(newUser.rows[0].user_id);
     res.json({ token });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json("Server Error.");
   }
 });
@@ -46,7 +45,6 @@ router.post("/login", validationInfo, async (req, res) => {
     const token = jwtGenerator(user.rows[0].user_id);
     res.json({ token });
   } catch (error) {
-    console.error(error);
     res.status(500).json("Server Error.");
   }
 });
@@ -55,7 +53,6 @@ router.get("/is-verify", authMiddleware, async (req, res) => {
   try {
     res.json(true);
   } catch (error) {
-    console.error(error);
     res.status(500).send("Server Error.");
   }
 });
