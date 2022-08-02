@@ -1,8 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { setIsAuthenticated } from "../store/authSlicer";
 
-const Dashboard = ({ setAuth }) => {
+const Dashboard = () => {
   const [name, setName] = useState();
+  const dispatch = useDispatch();
   async function getName() {
     try {
       const response = await fetch("http://localhost:8000/dashboard/", {
@@ -21,7 +24,7 @@ const Dashboard = ({ setAuth }) => {
   const logout = (e) => {
     e.preventDefault();
     localStorage.removeItem("token");
-    setAuth(false);
+    dispatch(setIsAuthenticated(false));
     toast.success("Logout Succesfully!");
   };
   return (

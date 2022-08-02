@@ -1,8 +1,11 @@
 import React, { Fragment, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { setIsAuthenticated } from "../store/authSlicer";
 
-const Login = ({ setAuth }) => {
+const Login = () => {
+  const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -26,7 +29,7 @@ const Login = ({ setAuth }) => {
       const parseRes = await response.json();
       if (parseRes.token) {
         localStorage.setItem("token", parseRes.token);
-        setAuth(true);
+        dispatch(setIsAuthenticated(true))
         toast.success("Login Succesfully!");
       } else {
         toast.error(parseRes);

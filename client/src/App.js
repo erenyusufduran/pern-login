@@ -1,24 +1,19 @@
 import "./App.css";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsAuthenticated } from "./store/authSlicer";
 
 toast.configure();
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const setAuth = (boolean) => {
-    setIsAuthenticated(boolean);
-  };
-
-  useEffect(() => {
-    isAuth();
-  }, []);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
 
   async function isAuth() {
     try {
@@ -27,11 +22,17 @@ function App() {
         headers: { token: localStorage.token },
       });
       const parseRes = await response.json();
-      parseRes === true ? setIsAuthenticated(true) : setIsAuthenticated(false);
+      parseRes === true
+        ? dispatch(setIsAuthenticated(true))
+        : dispatch(setIsAuthenticated(false));
     } catch (error) {
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    isAuth();
+  }, []);
 
   return (
     <Fragment>
@@ -43,9 +44,9 @@ function App() {
               path="/login"
               render={(props) =>
                 !isAuthenticated ? (
-                  <Login {...props} setAuth={setAuth} />
+                  <Login {...props} />
                 ) : (
-                  <Redirect to="/dashboard" />
+                  <Redirect to="/" />
                 )
               }
             ></Route>
@@ -54,18 +55,18 @@ function App() {
               path="/register"
               render={(props) =>
                 !isAuthenticated ? (
-                  <Register {...props} setAuth={setAuth} />
+                  <Register {...props} />
                 ) : (
-                  <Redirect to="/dashboard" />
+                  <Redirect to="/" />
                 )
               }
             ></Route>
             <Route
               exact
-              path="/dashboard"
+              path="/"
               render={(props) =>
                 isAuthenticated ? (
-                  <Dashboard {...props} setAuth={setAuth} />
+                  <Dashboard {...props} />
                 ) : (
                   <Redirect to="/login" />
                 )
