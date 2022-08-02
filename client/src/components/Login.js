@@ -6,6 +6,7 @@ const Login = ({ setAuth }) => {
     email: "",
     password: "",
   });
+  const [alert, setAlert] = useState("");
   const { email, password } = inputs;
   const onChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -22,10 +23,13 @@ const Login = ({ setAuth }) => {
         },
         body: JSON.stringify(body),
       });
-      console.log(response);
       const parseRes = await response.json();
-      localStorage.setItem("token", parseRes.token);
-      setAuth(true);
+      if (parseRes.token) {
+        localStorage.setItem("token", parseRes.token);
+        setAuth(true);
+      } else {
+        setAlert(parseRes);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -33,6 +37,7 @@ const Login = ({ setAuth }) => {
   return (
     <Fragment>
       <h1 className="text-center my-5">Login</h1>
+      <h4 className="text-center">{alert}</h4>
       <form onSubmit={onSubmitForm}>
         <input
           className="form-control my-3"
