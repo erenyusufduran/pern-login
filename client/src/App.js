@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsAuthenticated } from "./store/authSlicer";
+import axios from "axios";
+import "./apis/axios";
 
 toast.configure();
 
@@ -17,16 +19,12 @@ function App() {
 
   async function isAuth() {
     try {
-      const response = await fetch("http://localhost:8000/auth/is-verify/", {
-        method: "GET",
-        headers: { token: localStorage.token },
-      });
-      const parseRes = await response.json();
-      parseRes === true
+      const response = await axios.get("/auth/is-verify");
+      response.data === true
         ? dispatch(setIsAuthenticated(true))
         : dispatch(setIsAuthenticated(false));
-    } catch (error) {
-      console.error(error);
+    } catch {
+      dispatch(setIsAuthenticated(false));
     }
   }
 
@@ -43,22 +41,14 @@ function App() {
               exact
               path="/login"
               render={(props) =>
-                !isAuthenticated ? (
-                  <Login {...props} />
-                ) : (
-                  <Redirect to="/" />
-                )
+                !isAuthenticated ? <Login {...props} /> : <Redirect to="/" />
               }
             ></Route>
             <Route
               exact
               path="/register"
               render={(props) =>
-                !isAuthenticated ? (
-                  <Register {...props} />
-                ) : (
-                  <Redirect to="/" />
-                )
+                !isAuthenticated ? <Register {...props} /> : <Redirect to="/" />
               }
             ></Route>
             <Route

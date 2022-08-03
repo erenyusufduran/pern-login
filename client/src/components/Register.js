@@ -1,8 +1,10 @@
+import axios from "axios";
 import React, { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setIsAuthenticated } from "../store/authSlicer";
+import "../apis/axios";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -21,18 +23,17 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/auth/register", {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+      const response = await axios.post("/auth/register", {
+        name,
+        email,
+        password,
       });
-      const parseRes = await response.json();
-      if (parseRes.token) {
-        localStorage.setItem("token", parseRes.token);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
         dispatch(setIsAuthenticated(true));
         toast.success("Register Succesfully!");
       } else {
-        toast.error(parseRes);
+        toast.error(response.data);
       }
     } catch (error) {
       console.error(error.message);

@@ -1,8 +1,10 @@
+import axios from "axios";
 import React, { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setIsAuthenticated } from "../store/authSlicer";
+import "../apis/axios";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -17,22 +19,17 @@ const Login = () => {
   const onSubmitForm = async (e) => {
     e.preventDefault();
     try {
-      const body = { email, password };
-
-      const response = await fetch("http://localhost:8000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(body),
+      const response = await axios.post("/auth/login", {
+        email,
+        password,
       });
-      const parseRes = await response.json();
-      if (parseRes.token) {
-        localStorage.setItem("token", parseRes.token);
-        dispatch(setIsAuthenticated(true))
+      console.log(response);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        dispatch(setIsAuthenticated(true));
         toast.success("Login Succesfully!");
       } else {
-        toast.error(parseRes);
+        toast.error(response.data);
       }
     } catch (err) {
       console.error(err);

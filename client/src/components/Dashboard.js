@@ -1,19 +1,18 @@
+import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { setIsAuthenticated } from "../store/authSlicer";
+import "../apis/axios";
 
 const Dashboard = () => {
   const [name, setName] = useState();
   const dispatch = useDispatch();
   async function getName() {
     try {
-      const response = await fetch("http://localhost:8000/dashboard/", {
-        method: "GET",
-        headers: { token: localStorage.token },
-      });
-      const parseRes = await response.json();
-      setName(parseRes.user_name);
+      const response = await axios.get("/dashboard");
+      console.log(response);
+      setName(response.data.user_name);
     } catch (error) {
       console.error(error.message);
     }
